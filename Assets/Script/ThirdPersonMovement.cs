@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(Rigidbody))]
 public class ThirdPersonMovement : MonoBehaviour
@@ -10,16 +11,19 @@ public class ThirdPersonMovement : MonoBehaviour
     private Rigidbody rb;
     private Vector3 moveDirection;
 
+    // UI drag input
+    public Vector2 uiInput; // This should be set by your UI drag script
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.freezeRotation = true; // Prevent rotation tipping
+        rb.freezeRotation = true;
     }
 
     void Update()
     {
-        float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw("Vertical");
+        float h = uiInput.x != 0 ? uiInput.x : Input.GetAxisRaw("Horizontal");
+        float v = uiInput.y != 0 ? uiInput.y : Input.GetAxisRaw("Vertical");
 
         moveDirection = new Vector3(h, 0f, v).normalized;
 
@@ -32,5 +36,10 @@ public class ThirdPersonMovement : MonoBehaviour
         }
 
         animator.SetBool("isWalking", moveDirection.magnitude >= 0.1f);
+    }
+
+    public void SetUIInput(Vector2 input)
+    {
+        uiInput = input;
     }
 }
